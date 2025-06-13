@@ -1,0 +1,35 @@
+name: Bangumi Auto Sync
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # 每天UTC时间12:00（北京时间20:00）
+  workflow_dispatch:       # 允许手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+      
+      - name: Run Sync Script
+        env:
+          BGMI_USERNAME: ${{ secrets.BGMI_USERNAME }}
+          BGMI_API_KEY: ${{ secrets.BGMI_API_KEY }}
+        run: python bgmi_web_scraper.py
+      
+      - name: Commit State Changes
+        if: always()  # 即使脚本失败也执行
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add last_state.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update sync state"
+          git push
