@@ -24,12 +24,3 @@ jobs:
           BGMI_USERNAME: ${{ secrets.BGMI_USERNAME }}
           BGMI_API_KEY: ${{ secrets.BGMI_API_KEY }}
         run: python bgmi_web_scraper.py
-      
-      - name: Commit State Changes
-        if: always()  # 即使脚本失败也执行
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add last_state.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update sync state"
-          git push
