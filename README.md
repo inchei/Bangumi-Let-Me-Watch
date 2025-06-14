@@ -7,8 +7,8 @@
    - BGMI_USERNAME：自己的 bangumi ID
    - BGMI_API_KEY：自己的 Access Token，可以在[此处](https://next.bgm.tv/demo/access-token/create)获得，过期后需重新设置
 3. 前往 Settings → Actions 确保允许自动运行
-4. 脚本会在每天UTC时间12:00（北京时间20:00）自动运行
-   - 可以自行修改 `.github/workflows/bangumi-sync.yml` 中的 `cron` 自定义运行时间
+4. 修改 `.github/workflows/bangumi-sync.yml` 中的 `cron` 自定义每天运行时间，格式为UTC时间的 `分 时 * * *`，例如，`0 12 * * *` 表示每天UTC时间12:00（北京时间20:00）
+   - 时间设置得尽量随机分散，避免同时请求橄榄 bangumi 服务器
 
 ## 问题
 - 标记为“在看”的时间线不会显示先前的短评（https://github.com/bangumi/server/issues/856 ）
