@@ -17,12 +17,23 @@ headers = {
 }
 
 def format_chinese_date(date_str: str) -> str:
-    """日期格式化"""
-    match = re.search(r'(\d+)年(\d+)月(\d+)日', date_str)
-    if match:
-        y, m, d = match.groups()
+    """日期格式化，支持以下格式：
+    - 中文格式：YYYY年MM月DD日 → YYYY-MM-DD
+    - 数字格式：YYYY-MM-DD → 直接返回（确保补零）
+    """
+    # 尝试匹配中文格式：YYYY年MM月DD日
+    match_cn = re.search(r'(\d+)年(\d+)月(\d+)日', date_str)
+    if match_cn:
+        y, m, d = match_cn.groups()
         return f"{int(y):04d}-{int(m):02d}-{int(d):02d}"
-    print(f" 未找到日期: {date_str}")
+
+    # 尝试匹配数字格式：YYYY-MM-DD
+    match_num = re.search(r'(\d{4})-(\d{1,2})-(\d{1,2})', date_str)
+    if match_num:
+        y, m, d = match_num.groups()
+        return f"{int(y):04d}-{int(m):02d}-{int(d):02d}"  # 确保补零
+
+    print(f"⚠️ 未识别的日期格式: {date_str}")
     return ""
 
 def fetch_page(page: int) -> Optional[str]:
@@ -34,7 +45,7 @@ def fetch_page(page: int) -> Optional[str]:
         response.raise_for_status()
         return response.text
     except Exception as e:
-        print(f" 网页请求失败 (第{page}页): {e}")
+        print(f"❌ 网页请求失败 (第{page}页): {e}")
         return None
 
 def parse_subjects(html: str) -> List[Tuple[str, str]]:
@@ -55,7 +66,7 @@ def parse_subjects(html: str) -> List[Tuple[str, str]]:
         # 提取并格式化日期
         date_tag = item.select_one('.info.tip')
         if not date_tag:
-            print(f" 条目 {subject_id} 缺少日期标签")
+            print(f"⚠️ 条目 {subject_id} 缺少日期标签")
             continue
 
         raw_date = date_tag.get_text().strip()
@@ -75,7 +86,7 @@ def update_to_watching(subject_id: str, date: str, dry_run: bool) -> bool:
         return False
 
     if dry_run:
-        print(f" [安全模式] 应更新条目 {subject_id} 为「在看」")
+        print(f"🚧 [安全模式] 应更新条目 {subject_id} 为「在看」")
         return True
 
     try:
@@ -86,39 +97,39 @@ def update_to_watching(subject_id: str, date: str, dry_run: bool) -> bool:
             timeout=10
         )
         if response.status_code == 202:
-            print(f" 成功更新条目 {subject_id} 为「在看」")
+            print(f"✅ 成功更新条目 {subject_id} 为「在看」")
             return True
-        print(f" 更新失败 (HTTP {response.status_code}): {response.text}")
+        print(f"❌ 更新失败 (HTTP {response.status_code}): {response.text}")
     except Exception as e:
-        print(f" 更新异常: {e}")
+        print(f"❌ 更新异常: {e}")
     return False
 
 def main(dry_run: bool = False):
-    print(f"\n 开始同步 Bangumi「想看」列表 ({'安全模式' if dry_run else '正常模式'})")
-    print(f" 当前日期: {datetime.now().strftime('%Y-%m-%d')}")
+    print(f"\n🎬 开始同步 Bangumi「想看」列表 ({'安全模式' if dry_run else '正常模式'})")
+    print(f"⏰ 当前日期: {datetime.now().strftime('%Y-%m-%d')}")
     page = 1
 
     while True:
-        print(f"\n 正在处理第 {page} 页...")
+        print(f"\n📖 正在处理第 {page} 页...")
         html = fetch_page(page)
         if not html:
             break
 
         subjects = parse_subjects(html)
         if not subjects:
-            print(" 没有更多条目")
+            print("⏹️ 没有更多条目")
             break
 
         for subject_id, date in subjects:
             if date < datetime.now().strftime("%Y-%m-%d"):
-                print(f" 遇到早于今天的条目 ({date})，终止翻页")
+                print(f"⏹️ 遇到早于今天的条目 ({date})，终止翻页")
                 return
 
             update_to_watching(subject_id, date, dry_run)
 
         page += 1
 
-    print("\n 同步完成")
+    print("\n🛑 同步完成")
 
 if __name__ == "__main__":
     import argparse
@@ -127,7 +138,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not USERNAME:
-        print(" 请设置环境变量 BGMI_USERNAME")
+        print("❌ 请设置环境变量 BGMI_USERNAME")
         exit(1)
 
     main(dry_run=args.dry_run)
