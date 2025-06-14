@@ -9,3 +9,7 @@
 3. 前往 Settings → Actions 确保允许自动运行
 4. 脚本会在每天UTC时间12:00（北京时间20:00）自动运行
    - 可以自行修改 `.github/workflows/bangumi-sync.yml` 中的 `cron` 自定义运行时间
+
+## 问题
+- 标记为“在看”的时间线不会显示先前的短评（https://github.com/bangumi/server/issues/856 ）
+- 不考虑支持受限条目
