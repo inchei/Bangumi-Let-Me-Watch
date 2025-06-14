@@ -1,7 +1,7 @@
 # Bangumi-Let-Me-Watch [![bangumi](http://bgm.tv/img/ico/bgm80-15.png)](http://bgm.tv)
 自动将 bangumi 日期到了的“想看”动画标为“在看”。
 
-## 使用方法
+## 使用方法（GitHub Actions）
 1. Use this template 或 Fork 本仓库
 2. 在新建的自己的仓库中，进入仓库 Settings → Secrets and variables → Actions，点击 "New repository secret" 添加：
    - BGMI_USERNAME：自己的 bangumi ID
