@@ -1,8 +1,6 @@
 name: Bangumi Auto Sync
 
 on:
-  schedule:
-    - cron: '0 12 * * *'  # 每天UTC时间12:00（北京时间20:00）
   workflow_dispatch:       # 允许手动触发
 
 jobs:
