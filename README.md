@@ -2,7 +2,7 @@
 自动将 bangumi 日期到了的“想看”动画标为“在看”。
 
 ## 使用方法（GitHub Actions）
-1. [Fork](https://github.com/inchei/Bangumi-Let-Me-Watch/fork) 本仓库，确保勾选“Copy the main branch only”
+1. [Fork](https://github.com/inchei/Bangumi-Let-Me-Watch/fork) 本仓库
 2. 在新建的自己的仓库中，进入仓库 Settings → Secrets and variables → Actions，点击 "New repository secret" 添加：
    - BGMI_USERNAME：自己的 bangumi ID
    - BGMI_API_KEY：自己的 Access Token，可以在[此处](https://next.bgm.tv/demo/access-token/create)获得，过期后需重新设置
